@@ -1,6 +1,7 @@
 !function(e,t){typeof module!="undefined"?module.exports=t():typeof define=="function"&&typeof define.amd=="object"?define(t):this[e]=t()}("domready",function(){var e=[],t,n=document,r=n.documentElement.doScroll,i="DOMContentLoaded",s=(r?/^loaded|^c/:/^loaded|^i|^c/).test(n.readyState);return s||n.addEventListener(i,t=function(){n.removeEventListener(i,t),s=1;while(t=e.shift())t()}),function(t){s?t():e.push(t)}})
 var canvas;
 var ctx;
+var getUserMedia;
 var video = document.createElement('video');
 	video.autoplay = true;
 
@@ -17,7 +18,7 @@ var errorCallback = function(e) {
 function init(){
 
 	canvas = document.getElementById('canvas');
-	resizeCanvas();
+	// resizeCanvas();
 	
 	window.addEventListener('resize', resizeCanvas);
 
@@ -40,7 +41,7 @@ function requestUserMedia(){
 		    video.height = video.videoHeight;
 
 		    var dim = video.width >= video.height ? video.height : video.width;
-		    canvas.height = canvas.width = dim;
+		    canvas.height = canvas.width = dim * 4;
 		    resizeCanvas();
 		    window.requestAnimationFrame(draw);
 	    });
@@ -51,8 +52,9 @@ function requestUserMedia(){
 }
 
 function resizeCanvas(){
-	var factor = document.body.clientHeight <= document.body.clientWidth ? document.body.clientHeight / canvas.height : document.body.clientWidth / canvas.width;
-	canvas.setAttribute('style', 'transform: scale(' + factor + ')')
+	var factor = (document.body.clientHeight >= document.body.clientWidth ? document.body.clientHeight / canvas.height : document.body.clientWidth / canvas.width) + 0.05;
+	var translate = -50/factor;
+	canvas.setAttribute('style', 'transform: scale(' + factor + ') translate('+ translate +'%,' + translate + '%)');
 }
 
 function clipside(i){
@@ -60,6 +62,7 @@ function clipside(i){
 	ctx.beginPath();
 	var r = (canvas.clientHeight / 2) * 0.980785;
 	var rr = (canvas.clientHeight / 4) * 0.980785;
+	
 	var offset = canvas.clientHeight / 2;
 
 	
@@ -78,15 +81,20 @@ function clipside(i){
 		var yyyy = rr * Math.sin(aa) + r + 13;
 		ctx.lineTo(xxx, yyy);
 		ctx.lineTo(xxxx, yyyy);
+
+	var origin = { x: Math.min(x, xx, xxx, xxxx), y: Math.min(y, yy, yyy, yyyy)},
+		terminus = {x: Math.max(x, xx, xxx, xxxx), y: Math.max(y, yy, yyy, yyyy)};
 	
 	ctx.closePath();
 	ctx.clip();
+
+	ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, origin.x, origin.y, terminus.x - origin.x, terminus.y - origin.y);
+	ctx.restore();
 }
 
 function clipedge(){
 
 	ctx.beginPath();
-
 	var r = (canvas.clientHeight / 2) * 0.980785;
 
 	for(var i = 0; i < 16; i++){
@@ -97,20 +105,22 @@ function clipedge(){
 	}
 	ctx.closePath();
 	ctx.clip();
+
 }
 
 function draw() {
 	ctx.save();
 	clipedge();
-	ctx.drawImage(video, (video.videoWidth - video.videoHeight) / 2, 0, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth, video.videoHeight);
+	var sourceX = (video.videoWidth - video.videoHeight) / 2,
+		sourceY = 0;
+	ctx.drawImage(video, sourceX, sourceY, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth * 4, video.videoHeight * 4);
 	ctx.restore();
 	for(var i = 0; i < 16; i ++){
 		ctx.save();
 		clipside(i);
-		ctx.drawImage(video, ((video.videoWidth - video.videoHeight) / 2) + (i * 16), i * 16, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth, video.videoHeight);
-		ctx.restore();
+		// ctx.restore();
 	};
-
+	ctx.imageSmoothingEnabled = true;
 	window.setTimeout(function(){window.requestAnimationFrame(draw)}, 100);
 }
 
