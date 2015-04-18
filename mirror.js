@@ -1,4 +1,7 @@
 !function(e,t){typeof module!="undefined"?module.exports=t():typeof define=="function"&&typeof define.amd=="object"?define(t):this[e]=t()}("domready",function(){var e=[],t,n=document,r=n.documentElement.doScroll,i="DOMContentLoaded",s=(r?/^loaded|^c/:/^loaded|^i|^c/).test(n.readyState);return s||n.addEventListener(i,t=function(){n.removeEventListener(i,t),s=1;while(t=e.shift())t()}),function(t){s?t():e.push(t)}})
+
+
+
 var canvas;
 var ctx;
 var getUserMedia;
@@ -9,7 +12,6 @@ var video = document.createElement('video');
 
 
 var errorCallback = function(e) {
-			console.log('reeejected!', e);
 		};
 
 
@@ -58,7 +60,6 @@ function resizeCanvas(){
 }
 
 function clipside(i){
-	console.log(i);
 	ctx.beginPath();
 	var r = (canvas.clientHeight / 2) * 0.980785;
 	var rr = (canvas.clientHeight / 4) * 0.980785;
@@ -87,40 +88,72 @@ function clipside(i){
 	
 	ctx.closePath();
 	ctx.clip();
+	//top left corner of bounding box, - 1/2 width of image, - 1/2 width of bounding box
+	var videoX = (((terminus.x - origin.x) / 2) + origin.x) - (video.videoWidth * 1.5 / 2);
+	var videoY = (((terminus.y - origin.y) / 2) + origin.y) - (video.videoHeight * 1.5 / 2);
 
-	ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, origin.x, origin.y, terminus.x - origin.x, terminus.y - origin.y);
+	ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, videoX, videoY, video.videoWidth * 1.5, video.videoHeight * 1.5);
 	ctx.restore();
+
+
+	// ctx.beginPath();
+	// ctx.moveTo(videoX, videoY);
+	// ctx.lineTo(videoX + video.videoWidth, videoY);
+	// ctx.lineTo(videoX + video.videoWidth, videoY + video.videoHeight);
+	// ctx.lineTo(videoX, videoY + video.videoHeight);
+	// ctx.closePath();
+	// ctx.strokeStyle = "green";
+	// ctx.stroke();
+	// ctx.beginPath();
+	// ctx.moveTo(origin.x, origin.y);
+	// ctx.lineTo(terminus.x, origin.y);
+	// ctx.lineTo(terminus.x, terminus.y);
+	// ctx.lineTo(origin.x, terminus.y);
+	// ctx.closePath();
+	// ctx.strokeStyle = "red";
+	// ctx.stroke();
+
 }
 
 function clipedge(){
 
 	ctx.beginPath();
 	var r = (canvas.clientHeight / 2) * 0.980785;
+	var xmin,
+		xmax,
+		ymin,
+		ymax;
 
 	for(var i = 0; i < 16; i++){
 		var angle = 2 * Math.PI * (i + 0.5) / 16;
 		var x = r * Math.cos(angle) + r;
+			xmin = xmin || x;
+			xmax = xmax || x;
+			xmin = x < xmin ? x : xmin;
+			xmax = x > xmax ? x: xmax;
 		var y = r * Math.sin(angle) + r + 13;
+			ymin = ymin || y;
+			ymax = ymax || y;
+			ymin = y < ymin ? y : ymin;
+			ymax = y > ymax ? y : ymax;
 		i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
 	}
 	ctx.closePath();
 	ctx.clip();
+	var sourceX = (video.videoWidth - video.videoHeight) / 2,
+		sourceY = 0;
+	ctx.drawImage(video, sourceX, sourceY, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth * 4, video.videoHeight * 4);
 
 }
 
 function draw() {
 	ctx.save();
 	clipedge();
-	var sourceX = (video.videoWidth - video.videoHeight) / 2,
-		sourceY = 0;
-	ctx.drawImage(video, sourceX, sourceY, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth * 4, video.videoHeight * 4);
 	ctx.restore();
 	for(var i = 0; i < 16; i ++){
 		ctx.save();
 		clipside(i);
-		// ctx.restore();
 	};
-	ctx.imageSmoothingEnabled = true;
 	window.setTimeout(function(){window.requestAnimationFrame(draw)}, 100);
 }
 
