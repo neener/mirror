@@ -1,18 +1,25 @@
 !function(e,t){typeof module!="undefined"?module.exports=t():typeof define=="function"&&typeof define.amd=="object"?define(t):this[e]=t()}("domready",function(){var e=[],t,n=document,r=n.documentElement.doScroll,i="DOMContentLoaded",s=(r?/^loaded|^c/:/^loaded|^i|^c/).test(n.readyState);return s||n.addEventListener(i,t=function(){n.removeEventListener(i,t),s=1;while(t=e.shift())t()}),function(t){s?t():e.push(t)}})
 
-
-
 var canvas;
 var ctx;
 var getUserMedia;
 var video = document.createElement('video');
 	video.autoplay = true;
-
-
+var started = false;
 
 
 var errorCallback = function(e) {
-		};
+	if (started) return;
+	started = true;
+	
+	document.body.appendChild(video);
+    video.addEventListener('loadedmetadata', function(e){
+    	// video.loop = true;
+		// video.play();
+    	
+    });
+	// video.src = '/DA_Shatter-h.264.mp4';
+};
 
 
 
@@ -20,24 +27,30 @@ var errorCallback = function(e) {
 function init(){
 
 	canvas = document.getElementById('canvas');
-	// resizeCanvas();
+	
 	
 	window.addEventListener('resize', resizeCanvas);
 
-	navigator.getUserMedia  = navigator.getUserMedia ||
-                          navigator.webkitGetUserMedia ||
-                          navigator.mozGetUserMedia ||
-                          navigator.msGetUserMedia;
+	
 
 	ctx = canvas.getContext('2d');
 	requestUserMedia();
 }	
 
 function requestUserMedia(){
-	if (navigator.getUserMedia) {
-	  	navigator.getUserMedia({audio: false, video: true}, function(localMediaStream) {
-	    video.src = window.URL.createObjectURL(localMediaStream);
-	    video.addEventListener('loadedmetadata', function(){
+	window.setTimeout(function(){
+		if (!started) errorCallback();
+	}, 10000);
+		getUserMedia({audio:false, 
+			video:true, 
+			el:"webcam", 
+			mode:"callback", 
+			swffile: "jscam.swf", 
+			quality: 100, 
+			onLoad:function(stream){
+	    	video.src = window.URL.createObjectURL(stream);
+
+	    	started = true;
 
 		    video.width = video.videoWidth;
 		    video.height = video.videoHeight;
@@ -46,11 +59,7 @@ function requestUserMedia(){
 		    canvas.height = canvas.width = dim * 4;
 		    resizeCanvas();
 		    window.requestAnimationFrame(draw);
-	    });
-	  }, errorCallback);
-	} else {
-	  video.src = 'somevideo.webm'; // fallback.
-	}
+	    }})
 }
 
 function resizeCanvas(){
@@ -89,29 +98,14 @@ function clipside(i){
 	ctx.closePath();
 	ctx.clip();
 	//top left corner of bounding box, - 1/2 width of image, - 1/2 width of bounding box
-	var videoX = (((terminus.x - origin.x) / 2) + origin.x) - (video.videoWidth * 1.5 / 2);
-	var videoY = (((terminus.y - origin.y) / 2) + origin.y) - (video.videoHeight * 1.5 / 2);
+	var videoX = (((terminus.x - origin.x) / 2) + origin.x) - (video.videoWidth);
+	var videoY = (((terminus.y - origin.y) / 2) + origin.y) - (video.videoHeight);
 
-	ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, videoX, videoY, video.videoWidth * 1.5, video.videoHeight * 1.5);
+	ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, videoX, videoY, video.videoWidth * 2, video.videoHeight * 2);
 	ctx.restore();
 
 
-	// ctx.beginPath();
-	// ctx.moveTo(videoX, videoY);
-	// ctx.lineTo(videoX + video.videoWidth, videoY);
-	// ctx.lineTo(videoX + video.videoWidth, videoY + video.videoHeight);
-	// ctx.lineTo(videoX, videoY + video.videoHeight);
-	// ctx.closePath();
-	// ctx.strokeStyle = "green";
-	// ctx.stroke();
-	// ctx.beginPath();
-	// ctx.moveTo(origin.x, origin.y);
-	// ctx.lineTo(terminus.x, origin.y);
-	// ctx.lineTo(terminus.x, terminus.y);
-	// ctx.lineTo(origin.x, terminus.y);
-	// ctx.closePath();
-	// ctx.strokeStyle = "red";
-	// ctx.stroke();
+
 
 }
 
@@ -119,6 +113,7 @@ function clipedge(){
 
 	ctx.beginPath();
 	var r = (canvas.clientHeight / 2) * 0.980785;
+	var rr = (canvas.clientHeight / 4) * 0.980785;
 	var xmin,
 		xmax,
 		ymin,
@@ -140,9 +135,11 @@ function clipedge(){
 	}
 	ctx.closePath();
 	ctx.clip();
+	var ratio = rr * 2 / video.videoHeight;
 	var sourceX = (video.videoWidth - video.videoHeight) / 2,
 		sourceY = 0;
-	ctx.drawImage(video, sourceX, sourceY, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth * 4, video.videoHeight * 4);
+	var destinationX = r - rr;
+	ctx.drawImage(video, sourceX, sourceY, video.videoHeight, video.videoHeight, destinationX, destinationX + 5, rr * 2, rr * 2);
 
 }
 

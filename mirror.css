@@ -8,6 +8,12 @@ body, html{
 	height: 100%;
 	text-align: center;
 	overflow: hidden;
+	z-index: 1;
+	font-family: RomanaBT-Bold;
+	background-image: url(DA_Logo_spectra.jpg);
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
 canvas{
@@ -16,4 +22,21 @@ canvas{
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
+	z-index: 2;
+}
+
+a{
+	color:black;
+}
+
+.protozoa{
+	position:fixed;
+	bottom: 4%;
+	right: 3%;
+	color:black;
+	z-index: 3;
+}
+
+#webcam{
+	display:none;
 }
