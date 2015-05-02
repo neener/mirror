@@ -16,15 +16,6 @@ body, html{
 	background-repeat: no-repeat;
 }
 
-canvas{
-	display: inline-block;
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 2;
-}
-
 a{
 	color:black;
 }
@@ -35,6 +26,48 @@ a{
 	right: 3%;
 	color:black;
 	z-index: 3;
+}
+
+canvas{
+	display: inline-block;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	z-index: 0;
+}
+
+body.flash.loaded canvas{
+	z-index: 3;
+}
+
+body.flash #webcam{
+	display: block;
+	top: 0;
+	position: absolute;
+	z-index: 1;
+}
+
+body.flash .blinder{
+	position: absolute;
+	width: 30%;
+	height: 100%;
+	background-color: white;
+	z-index: 2;
+	top: 0;
+}
+
+.blinder.right{
+	right: 0;
+}
+
+.blinder.left{
+	left: 0;
+}
+
+body.flash.loaded #webcam{
+	z-index: 0;
 }
 
 /*#webcam{

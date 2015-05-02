@@ -41,19 +41,22 @@ function requestUserMedia(){
 
 	if(navigator.getUserMedia){
 		navigator.getUserMedia({audio: false, video: true}, function(localMediaStream) {
-	    video = document.createElement('video');
-		video.autoplay = true;
-	    video.src = window.URL.createObjectURL(localMediaStream);
-	    video.addEventListener('loadedmetadata', function(){
+		    video = document.createElement('video');
+			video.autoplay = true;
+		    video.src = window.URL.createObjectURL(localMediaStream);
+		    
+		    video.addEventListener('loadedmetadata', function(){
 
-		    video.width = video.videoWidth;
-		    video.height = video.videoHeight;
+			    video.width = video.videoWidth;
+			    video.height = video.videoHeight;
 
-		    var dim = video.width >= video.height ? video.height : video.width;
-		    canvas.height = canvas.width = dim * 4;
-		    resizeCanvas();
-		    window.requestAnimationFrame(draw);
-	    });
+			    var dim = video.width >= video.height ? video.height : video.width;
+			    canvas.height = canvas.width = dim * 4;
+			    resizeCanvas();
+			    window.requestAnimationFrame(draw);
+		    });
+		});
+
 	} else{
 		video = img;
 		  video.videoWidth = 640;
@@ -63,15 +66,15 @@ function requestUserMedia(){
 		  document.body.appendChild(document.createElement('div')).setAttribute('class', 'blinder right');
 		  var cam = document.getElementById('webcam');
 		  var dim = window.innerHeight;
-		    cam.style.height = dim * 0.666667 + 'px';
-		  	cam.style.width = dim * 0.666667 * 1.75 + 'px';
+		    cam.style.height = dim * 0.75 + 'px';
+		  	cam.style.width = dim * 0.75 * 1.75 + 'px';
 		  	cam.style.left = cam.style.top = '50%';
-		  	cam.style.marginTop = (-0.5 * (dim * 0.666667)) + 'px';
-		  	cam.style.marginLeft = (-0.5 * (dim * 0.666667 * 1.75)) + 'px';
+		  	cam.style.marginTop = (-0.5 * (dim * 0.75)) + 'px';
+		  	cam.style.marginLeft = (-0.5 * (dim * 0.75 * 1.75)) + 'px';
 
 		  Webcam.set({
-		  	width: (dim * 0.666667) * 1.75,
-		  	height: dim * 0.666667,
+		  	width: (dim * 0.75) * 1.75,
+		  	height: dim * 0.75,
 		  	dest_width: 640,
 		  	dest_height: 480,
 		  	force_flash: true
