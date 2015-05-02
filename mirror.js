@@ -5,15 +5,10 @@
 var canvas;
 var ctx;
 var getUserMedia;
-var video = document.createElement('video');
-	video.autoplay = true;
-
-
-
-
-var errorCallback = function(e) {
-		};
-
+var video;
+var img = document.createElement('img');
+	img.height = 480;
+	img.width = 640;
 
 
 
@@ -36,6 +31,8 @@ function init(){
 function requestUserMedia(){
 	if (navigator.getUserMedia) {
 	  	navigator.getUserMedia({audio: false, video: true}, function(localMediaStream) {
+	    video = document.createElement('video');
+		video.autoplay = true;
 	    video.src = window.URL.createObjectURL(localMediaStream);
 	    video.addEventListener('loadedmetadata', function(){
 
@@ -49,7 +46,36 @@ function requestUserMedia(){
 	    });
 	  }, errorCallback);
 	} else {
-	  video.src = 'somevideo.webm'; // fallback.
+	  video = img;
+	  video.videoWidth = 640;
+	  video.videoHeight = 480;
+	  document.body.setAttribute('class', 'flash');
+	  document.body.appendChild(document.createElement('div')).setAttribute('class', 'blinder left');
+	  document.body.appendChild(document.createElement('div')).setAttribute('class', 'blinder right');
+	  var cam = document.getElementById('webcam');
+	  var dim = window.innerHeight;
+	    cam.style.height = dim * 0.666667 + 'px';
+	  	cam.style.width = dim * 0.666667 * 1.75 + 'px';
+	  	cam.style.left = cam.style.top = '50%';
+	  	cam.style.marginTop = (-0.5 * (dim * 0.666667)) + 'px';
+	  	cam.style.marginLeft = (-0.5 * (dim * 0.666667 * 1.75)) + 'px';
+
+	  Webcam.set({
+	  	width: (dim * 0.666667) * 1.75,
+	  	height: dim * 0.666667,
+	  	dest_width: 640,
+	  	dest_height: 480,
+	  	force_flash: true
+	  });
+
+	  Webcam.attach(
+	  	'#webcam'
+	  );
+
+	  Webcam.on('live', function(){
+	  	document.body.setAttribute('class', 'flash loaded');
+	  	window.requestAnimationFrame(drawFlash);
+	  });
 	}
 }
 
@@ -143,7 +169,23 @@ function clipedge(){
 	var sourceX = (video.videoWidth - video.videoHeight) / 2,
 		sourceY = 0;
 	ctx.drawImage(video, sourceX, sourceY, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth * 4, video.videoHeight * 4);
+}
 
+
+function drawFlash(){
+	Webcam.snap(function(uri){
+		img.src = uri;
+		img.onload = function(){
+
+
+			for(var i = 0; i < 16; i ++){
+				ctx.save();
+				clipside(i);
+			};
+
+			window.requestAnimationFrame(drawFlash)
+		}
+	})
 }
 
 function draw() {
