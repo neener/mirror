@@ -55,15 +55,25 @@ function requestUserMedia(){
 			    resizeCanvas();
 			    window.requestAnimationFrame(draw);
 		    });
-		});
+		}, errorCallback);
 
 	} else{
 		video = img;
 		  video.videoWidth = 640;
 		  video.videoHeight = 480;
 		  document.body.setAttribute('class', 'flash');
-		  document.body.appendChild(document.createElement('div')).setAttribute('class', 'blinder left');
-		  document.body.appendChild(document.createElement('div')).setAttribute('class', 'blinder right');
+		  var left = document.body.appendChild(document.createElement('div'))
+		  	  left.setAttribute('class', 'blinder left');
+
+		  var right = document.body.appendChild(document.createElement('div'))
+		  	  right.setAttribute('class', 'blinder right');
+		  var w = (window.innerWidth - ((canvas.clientHeight / 2) * 0.980785)) / 2.5;
+		  	  left.style.width = right.style.width = w + 'px';
+
+		  	  window.addEventListener('resize', function(){
+		  	  	  w = (window.innerWidth - ((canvas.clientHeight / 2) * 0.980785)) / 2.5;
+		  	  	  left.style.width = right.style.width = w + 'px';
+			  	});
 		  var cam = document.getElementById('webcam');
 		  var dim = window.innerHeight;
 		    cam.style.height = dim * 0.75 + 'px';
@@ -85,6 +95,7 @@ function requestUserMedia(){
 		  );
 
 		  Webcam.on('live', function(){
+		  	started = true;
 		  	document.body.setAttribute('class', 'flash loaded');
 		  	window.requestAnimationFrame(drawFlash);
 		  });
