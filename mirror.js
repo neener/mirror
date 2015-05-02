@@ -43,23 +43,25 @@ function requestUserMedia(){
 	}, 10000);
 		getUserMedia({audio:false, 
 			video:true, 
-			el:"webcam", 
+			el: "webcam",
 			mode:"callback", 
-			swffile: "jscam.swf", 
-			quality: 100, 
-			onLoad:function(stream){
-	    	video.src = window.URL.createObjectURL(stream);
+			width: 320,
+			height: 240,
+			swffile: "jscam_canvas_only.swf", 
+			quality: 100,
+		},function(stream){
+	    		video.src = window.URL.createObjectURL(stream);
 
-	    	started = true;
+	    		started = true;
 
-		    video.width = video.videoWidth;
-		    video.height = video.videoHeight;
+		   		video.width = video.videoWidth;
+		    	video.height = video.videoHeight;
 
-		    var dim = video.width >= video.height ? video.height : video.width;
-		    canvas.height = canvas.width = dim * 4;
-		    resizeCanvas();
-		    window.requestAnimationFrame(draw);
-	    }})
+		    	var dim = video.width >= video.height ? video.height : video.width;
+		    	canvas.height = canvas.width = dim * 4;
+		    	resizeCanvas();
+		    	window.requestAnimationFrame(draw);
+	    }, function(error){ console.log(e);})
 }
 
 function resizeCanvas(){

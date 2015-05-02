@@ -37,6 +37,11 @@ a{
 	z-index: 3;
 }
 
-#webcam{
-	display:none;
+/*#webcam{
+	position: absolute;
+	z-index: 1000;
+}*/
+
+video{
+	display: none;
 }
