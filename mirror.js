@@ -3,25 +3,18 @@
 var canvas;
 var ctx;
 var getUserMedia;
-var video = document.createElement('video');
-	video.autoplay = true;
+var video;
 var started = false;
+var img = document.createElement('img');
+	img.height = 480;
+	img.width = 640;
 
 
-var errorCallback = function(e) {
-	if (started) return;
-	started = true;
-	
-	document.body.appendChild(video);
-    video.addEventListener('loadedmetadata', function(e){
-    	// video.loop = true;
-		// video.play();
-    	
-    });
-	// video.src = '/DA_Shatter-h.264.mp4';
-};
-
-
+function errorCallback(){
+	document.body.removeChild(document.getElementById('#webcam'));
+	document.body.removeChild(document.querySelector('.blinder.left'));
+	document.body.removeChild(document.querySelector('.blinder.right'));
+}
 
 
 function init(){
@@ -31,6 +24,10 @@ function init(){
 	
 	window.addEventListener('resize', resizeCanvas);
 
+	navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
 	
 
 	ctx = canvas.getContext('2d');
@@ -41,27 +38,55 @@ function requestUserMedia(){
 	window.setTimeout(function(){
 		if (!started) errorCallback();
 	}, 10000);
-		getUserMedia({audio:false, 
-			video:true, 
-			el: "webcam",
-			mode:"callback", 
-			width: 320,
-			height: 240,
-			swffile: "jscam_canvas_only.swf", 
-			quality: 100,
-		},function(stream){
-	    		video.src = window.URL.createObjectURL(stream);
 
-	    		started = true;
+	if(navigator.getUserMedia){
+		navigator.getUserMedia({audio: false, video: true}, function(localMediaStream) {
+	    video = document.createElement('video');
+		video.autoplay = true;
+	    video.src = window.URL.createObjectURL(localMediaStream);
+	    video.addEventListener('loadedmetadata', function(){
 
-		   		video.width = video.videoWidth;
-		    	video.height = video.videoHeight;
+		    video.width = video.videoWidth;
+		    video.height = video.videoHeight;
 
-		    	var dim = video.width >= video.height ? video.height : video.width;
-		    	canvas.height = canvas.width = dim * 4;
-		    	resizeCanvas();
-		    	window.requestAnimationFrame(draw);
-	    }, function(error){ console.log(e);})
+		    var dim = video.width >= video.height ? video.height : video.width;
+		    canvas.height = canvas.width = dim * 4;
+		    resizeCanvas();
+		    window.requestAnimationFrame(draw);
+	    });
+	} else{
+		video = img;
+		  video.videoWidth = 640;
+		  video.videoHeight = 480;
+		  document.body.setAttribute('class', 'flash');
+		  document.body.appendChild(document.createElement('div')).setAttribute('class', 'blinder left');
+		  document.body.appendChild(document.createElement('div')).setAttribute('class', 'blinder right');
+		  var cam = document.getElementById('webcam');
+		  var dim = window.innerHeight;
+		    cam.style.height = dim * 0.666667 + 'px';
+		  	cam.style.width = dim * 0.666667 * 1.75 + 'px';
+		  	cam.style.left = cam.style.top = '50%';
+		  	cam.style.marginTop = (-0.5 * (dim * 0.666667)) + 'px';
+		  	cam.style.marginLeft = (-0.5 * (dim * 0.666667 * 1.75)) + 'px';
+
+		  Webcam.set({
+		  	width: (dim * 0.666667) * 1.75,
+		  	height: dim * 0.666667,
+		  	dest_width: 640,
+		  	dest_height: 480,
+		  	force_flash: true
+		  });
+
+		  Webcam.attach(
+		  	'#webcam'
+		  );
+
+		  Webcam.on('live', function(){
+		  	document.body.setAttribute('class', 'flash loaded');
+		  	window.requestAnimationFrame(drawFlash);
+		  });
+	}
+	
 }
 
 function resizeCanvas(){
@@ -143,6 +168,22 @@ function clipedge(){
 	var destinationX = r - rr;
 	ctx.drawImage(video, sourceX, sourceY, video.videoHeight, video.videoHeight, destinationX, destinationX + 5, rr * 2, rr * 2);
 
+}
+
+function drawFlash(){
+	Webcam.snap(function(uri){
+		img.src = uri;
+		img.onload = function(){
+
+
+			for(var i = 0; i < 16; i ++){
+				ctx.save();
+				clipside(i);
+			};
+
+			window.requestAnimationFrame(drawFlash)
+		}
+	})
 }
 
 function draw() {
