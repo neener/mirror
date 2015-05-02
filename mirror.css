@@ -8,6 +8,24 @@ body, html{
 	height: 100%;
 	text-align: center;
 	overflow: hidden;
+	z-index: 1;
+	font-family: RomanaBT-Bold;
+	background-image: url(DA_Logo_spectra.jpg);
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+a{
+	color:black;
+}
+
+.protozoa{
+	position:fixed;
+	bottom: 4%;
+	right: 3%;
+	color:black;
+	z-index: 3;
 }
 
 canvas{
@@ -50,4 +68,13 @@ body.flash .blinder{
 
 body.flash.loaded #webcam{
 	z-index: 0;
+}
+
+/*#webcam{
+	position: absolute;
+	z-index: 1000;
+}*/
+
+video{
+	display: none;
 }
