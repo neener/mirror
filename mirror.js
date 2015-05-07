@@ -67,11 +67,11 @@ function requestUserMedia(){
 
 		  var right = document.body.appendChild(document.createElement('div'))
 		  	  right.setAttribute('class', 'blinder right');
-		  var w = (window.innerWidth - ((canvas.clientHeight / 2) * 0.980785)) / 2.5;
+		  var w = (window.innerWidth - ((canvas.clientHeight / 2) * 0.980785)) / 2.1;
 		  	  left.style.width = right.style.width = w + 'px';
 
 		  	  window.addEventListener('resize', function(){
-		  	  	  w = (window.innerWidth - ((canvas.clientHeight / 2) * 0.980785)) / 2.5;
+		  	  	  w = (window.innerWidth - ((canvas.clientHeight / 2) * 0.980785)) / 2.1;
 		  	  	  left.style.width = right.style.width = w + 'px';
 			  	});
 		  var cam = document.getElementById('webcam');
