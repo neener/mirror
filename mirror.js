@@ -76,15 +76,15 @@ function requestUserMedia(){
 			  	});
 		  var cam = document.getElementById('webcam');
 		  var dim = window.innerHeight;
-		    cam.style.height = dim * 0.75 + 'px';
-		  	cam.style.width = dim * 0.75 * 1.75 + 'px';
+		    cam.style.height = 500 + 'px';
+		  	cam.style.width = 900 + 'px';
 		  	cam.style.left = cam.style.top = '50%';
-		  	cam.style.marginTop = (-0.5 * (dim * 0.75)) + 'px';
-		  	cam.style.marginLeft = (-0.5 * (dim * 0.75 * 1.75)) + 'px';
+		  	cam.style.marginTop = -250 + 'px';
+		  	cam.style.marginLeft = -450 + 'px';
 
 		  Webcam.set({
-		  	width: (dim * 0.75) * 1.75,
-		  	height: dim * 0.75,
+		  	width: 900,
+		  	height: 500,
 		  	dest_width: 640,
 		  	dest_height: 480,
 		  	force_flash: true
