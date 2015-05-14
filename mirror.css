@@ -10,6 +10,13 @@ body, html{
 	overflow: hidden;
 	z-index: 1;
 	font-family: RomanaBT-Bold;
+}
+
+body.waiting{
+	background-image: none;
+}
+
+body{
 	background-image: url(DA_Logo_spectra.jpg);
 	background-size: contain;
 	background-position: center center;
