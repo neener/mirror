@@ -57,48 +57,17 @@ function requestUserMedia(){
 			    window.requestAnimationFrame(draw);
 		    });
 		}, errorCallback);
-
-	} else{
-		video = img;
-		  video.videoWidth = 640;
-		  video.videoHeight = 480;
-		  document.body.setAttribute('class', 'flash');
-		  var left = document.body.appendChild(document.createElement('div'))
-		  	  left.setAttribute('class', 'blinder left');
-
-		  var right = document.body.appendChild(document.createElement('div'))
-		  	  right.setAttribute('class', 'blinder right');
-		  var w = (window.innerWidth - ((canvas.clientHeight / 2) * 0.980785)) / 2.1;
-		  	  left.style.width = right.style.width = w + 'px';
-
-		  	  window.addEventListener('resize', function(){
-		  	  	  w = (window.innerWidth - ((canvas.clientHeight / 2) * 0.980785)) / 2.1;
-		  	  	  left.style.width = right.style.width = w + 'px';
-			  	});
-		  var cam = document.getElementById('webcam');
-		  var dim = window.innerHeight;
-		    cam.style.height = 500 + 'px';
-		  	cam.style.width = 900 + 'px';
-		  	cam.style.left = cam.style.top = '50%';
-		  	cam.style.marginTop = -250 + 'px';
-		  	cam.style.marginLeft = -450 + 'px';
-
-		  Webcam.set({
-		  	width: 900,
-		  	height: 500,
-		  	dest_width: 900,
-		  	dest_height: 500
-		  });
-
-		  Webcam.attach(
-		  	'#webcam'
-		  );
-
-		  Webcam.on('live', function(){
-		  	started = true;
-		  	document.body.setAttribute('class', 'flash loaded');
-		  	window.requestAnimationFrame(drawFlash);
-		  });
+	} else {
+ 		var ismobile=navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
+ 		var issafari=navigator.userAgent.match(/safari/i);
+		if (!ismobile && issafari){
+// desktop safari
+		} else if(ismobile){
+// mobile
+		} else{
+// desktop devices with no usermedia
+		}
+		
 	}
 	
 }
@@ -109,7 +78,7 @@ function resizeCanvas(){
 	canvas.setAttribute('style', 'transform: scale(' + factor + ') translate('+ translate +'%,' + translate + '%)');
 }
 
-function clipside(i, flash, data){
+function clipside(i){
 	ctx.beginPath();
 	var r = (canvas.clientHeight / 2) * 0.980785;
 	var rr = (canvas.clientHeight / 4) * 0.980785;
@@ -139,15 +108,11 @@ function clipside(i, flash, data){
 	ctx.closePath();
 	ctx.clip();
 	//top left corner of bounding box, - 1/2 width of image, - 1/2 width of bounding box
-	if(!flash){
 	var videoX = (((terminus.x - origin.x) / 2) + origin.x) - (video.videoWidth);
 	var videoY = (((terminus.y - origin.y) / 2) + origin.y) - (video.videoHeight);
-	} else{
-	var videoX = (((terminus.x - origin.x) / 2) + origin.x) - (data.width);
-	var videoY = (((terminus.y - origin.y) / 2) + origin.y) - (data.height);
-	}
 
-	flash ? ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, videoX, videoY, video.videoWidth * 2, video.videoHeight * 2) : ctx.putImageData(data, data.width, data.height, videoX, videoY, data.width * 2, data.height * 2) ;
+
+	ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, videoX, videoY, video.videoWidth * 2, video.videoHeight * 2);
 	
 
 	ctx.restore();
@@ -191,31 +156,6 @@ function clipedge(){
 
 }
 
-function drawFlash(){
-	Webcam.snap(function(uri, canvas, context){
-		// img.src = uri;
-		// img.onload = function(){
-
-			video = ctx;
-			var imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
-
-			for(var ii = 0, len = imageData.data.length / 4; ii += 4; ii < len){
-				var r = imageData[i];
-				var b = imageData[i + 2];
-
-				imageData[i] = b;
-				imageData[i + 2] = r;
-			}
-
-			for(var i = 0; i < 16; i ++){
-				ctx.save();
-				clipside(i, true, imageData);
-			};
-
-			window.requestAnimationFrame(drawFlash)
-		// }
-	})
-}
 
 function draw() {
 	ctx.save();
