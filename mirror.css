@@ -17,10 +17,29 @@ body.waiting{
 }
 
 body{
-	background-image: url(DA_Logo_spectra.jpg);
+	background-image: url(DA_Logo_current.jpg);
 	background-size: contain;
 	background-position: center center;
 	background-repeat: no-repeat;
+}
+
+body.safari #desktopsafari{
+	display: block;
+	margin-top: 50%;
+}
+
+body.mobile #mobile{
+	display: block;
+	margin-top: 50%;
+}
+
+body.nocam #nocam{
+	display: block;
+	margin-top: 50%;
+}
+
+#desktopsafari, #mobile, #nocam{
+	display:none;
 }
 
 a{

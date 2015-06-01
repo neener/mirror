@@ -10,11 +10,15 @@ var img = document.createElement('img');
 	img.width = 640;
 
 
-function errorCallback(){
+function errorCallback(type){
+
 	document.body.removeChild(document.querySelector('#webcam'));
 	if(document.querySelector('.blinder.left')) document.body.removeChild(document.querySelector('.blinder.left'));
 	if(document.querySelector('.blinder.right'))document.body.removeChild(document.querySelector('.blinder.right'));
-	document.body.setAttribute('class','');
+	if(!type) document.body.setAttribute('class','');
+	if(type == 'safari') document.body.setAttribute('class', 'safari');
+	if(type == 'mobile') document.body.setAttribute('class', 'mobile');
+	if(type == 'nocam') document.body.setAttribute('class', 'nocam');
 }
 
 
@@ -61,10 +65,12 @@ function requestUserMedia(){
  		var ismobile=navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
  		var issafari=navigator.userAgent.match(/safari/i);
 		if (!ismobile && issafari){
-// desktop safari
+			errorCallback('safari');
 		} else if(ismobile){
+			errorCallback('mobile');
 // mobile
 		} else{
+			errorCallback('nocam');
 // desktop devices with no usermedia
 		}
 		
