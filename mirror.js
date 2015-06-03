@@ -42,7 +42,7 @@ function init(){
 function requestUserMedia(){
 	window.setTimeout(function(){
 		if (!started) errorCallback();
-	}, 10000);
+	}, 5000);
 
 	if(navigator.getUserMedia){
 		navigator.getUserMedia({audio: false, video: true}, function(localMediaStream) {
