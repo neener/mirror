@@ -17,31 +17,31 @@ body.waiting{
 }
 
 body{
-	background-image: url(da_logo_chrome.jpg);
+	background-image: url(da_logo.jpg);
 	background-size: contain;
 	background-position: center center;
 	background-repeat: no-repeat;
 }
 
 body.safari #desktopsafari{
-	background-image: url(da_logo_safari.jpg);
-	background-size: contain;
-	background-position: center center;
-	background-repeat: no-repeat;
+	display: block;
+	margin-top: 38%;
+	font-size: 12px;
+	font-weight: 50;
 }
 
 body.mobile #mobile{
-	background-image: url(da_logo_mobile.jpg);
-	background-size: contain;
-	background-position: center center;
-	background-repeat: no-repeat;
+	display: block;
+	margin-top: 80%;
+	font-size: 12px;
+	font-weight: 50;
 }
 
 body.nocam #nocam{
-	background-image: url(da_logo_safari);
-	background-size: contain;
-	background-position: center center;
-	background-repeat: no-repeat;
+	display: block;
+	margin-top: 38%;
+	font-size: 12px;
+	font-weight: 50;
 }
 
 #desktopsafari, #mobile, #nocam{

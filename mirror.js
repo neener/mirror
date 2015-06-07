@@ -12,9 +12,6 @@ var img = document.createElement('img');
 
 function errorCallback(type){
 
-	document.body.removeChild(document.querySelector('#webcam'));
-	if(document.querySelector('.blinder.left')) document.body.removeChild(document.querySelector('.blinder.left'));
-	if(document.querySelector('.blinder.right'))document.body.removeChild(document.querySelector('.blinder.right'));
 	if(!type) document.body.setAttribute('class','');
 	if(type == 'safari') document.body.setAttribute('class', 'safari');
 	if(type == 'mobile') document.body.setAttribute('class', 'mobile');
@@ -61,6 +58,7 @@ function requestUserMedia(){
 			    window.requestAnimationFrame(draw);
 		    });
 		}, errorCallback);
+		window.setTimeout(errorCallback.bind(this, 'nocam'), 5000);
 	} else {
  		var ismobile=navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
  		var issafari=navigator.userAgent.match(/safari/i);
